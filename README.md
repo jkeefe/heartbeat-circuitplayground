@@ -1,2 +1,2 @@
 # heartbeat-circuitplayground
-Using Circuitplayground &amp; Circuit python to display heartbeat LEDs
+Using Circuitplayground &amp; Circuitpython to display heartbeat LEDs

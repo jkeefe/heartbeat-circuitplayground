@@ -130,14 +130,10 @@ while True:
                 dimmest = 90
                 brightness_difference_per_period = int( (brightest - dimmest) / (animation_steps) )
 
-                print(bpm, period, animation_step_length)
+                ## Could set brightest based on range of bpm, too
+                ## Dimmest too, for that matter
 
-                # # get bright
-                # for illumination in range( dimmest, brightest, brightness_difference_per_period):
-                #     COLOR = (illumination, 0, 0)
-                #     pixels.fill(COLOR)
-                #     pixels.show()
-                #     time.sleep(animation_step_length)
+                print(bpm, period, animation_step_length)
 
                 # get dim
                 for illumination in range( brightest, dimmest, -brightness_difference_per_period):

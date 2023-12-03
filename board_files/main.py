@@ -19,24 +19,51 @@ import adafruit_ble
 from adafruit_ble.advertising.standard import ProvideServicesAdvertisement
 from adafruit_ble.services.standard.device_info import DeviceInfoService
 from adafruit_ble_heart_rate import HeartRateService
-from digitalio import DigitalInOut, Direction
+from digitalio import DigitalInOut, Direction, Pull
+import pwmio
 
 #on-board status LED setup
 red_led = DigitalInOut(board.D13)
 red_led.direction = Direction.OUTPUT
 red_led.value = True
 
+strand = pwmio.PWMOut(board.AUDIO)
+
+# # set up button using board module
+# button = DigitalInOut(board.BUTTON_A)
+# button.direction = Direction.INPUT
+# button.pull = Pull.DOWN
+## use if button.value: ..
+
+use_neos = False
+
+
 #NeoPixel code
 pixels = neopixel.NeoPixel(board.NEOPIXEL, 10, brightness=0.2, auto_write=False)
 RED = (255, 0, 0)
 LIGHTRED = (25, 0, 0)
+BLANK = (0,0,0)
 
 def color_chase(color, wait):
     for i in range(10):
         pixels[i] = color
         time.sleep(wait)
         pixels.show()
-    time.sleep(0.5)
+    time.sleep(1)
+
+    if not use_neos:
+        pixels.fill(BLANK)
+        pixels.show()
+
+def scale_a(value):
+    # Scale a value from 0-65535 (AnalogIn range) to 0-255 (RGB range)
+    return int(value / 65535 * 255)
+
+def scale_b(value):
+    # Scale a value from 0-255 (RGB range) to 0-65535 (AnalogOut range) 
+    return int(value * 65535 / 255)
+
+
 
 # animation to show initialization of program
 color_chase(RED, 0.1)  # Increase the number to slow down the color chase
@@ -107,13 +134,13 @@ while True:
                     print("-")
                 else:
                     time.sleep(0.1)
-                    # print(bpm)
+
             if bpm != 0: # prevent from divide by zero
                 #find interval time between beats
                 bps = bpm / 60
                 period = 1 / bps
                 time_on = 0.375 * period
-                time_off = period - time_on
+                time_off = period - time_on 
 
             #     # Blink leds at the given BPM
             #     pixels.fill(RED)
@@ -124,10 +151,18 @@ while True:
             #     time.sleep(time_off)
 
                 # Fade up and down in a given period
+
+                # # good for on-board neopixels
+                # animation_steps = 40
+                # brightest = 200
+                # dimmest = 90
+
+                # # good for LEDS
                 animation_steps = 40
+                brightest = 255
+                dimmest = 40
+
                 animation_step_length = period / animation_steps
-                brightest = 200
-                dimmest = 90
                 brightness_difference_per_period = int( (brightest - dimmest) / (animation_steps) )
 
                 ## Could set brightest based on range of bpm, too
@@ -137,8 +172,25 @@ while True:
 
                 # get dim
                 for illumination in range( brightest, dimmest, -brightness_difference_per_period):
+                    # neopixels on board
                     COLOR = (illumination, 0, 0)
-                    pixels.fill(COLOR)
-                    pixels.show()
+
+                    if use_neos:
+                        pixels.fill(COLOR)
+                        pixels.show()
+                    else:
+                        monitor_arc = int(bpm/10) -5
+                        for i in range(0, 10):
+                            if i <= monitor_arc:
+                                pixels[i] = LIGHTRED
+                            else:
+                                pixels[i] = BLANK
+                        pixels.show()
+
+                    # external LED
+                    strand.duty_cycle = scale_b(illumination)
+
                     time.sleep(animation_step_length)
+
+                    
 

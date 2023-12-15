@@ -65,7 +65,7 @@ beat_scaler = make_interpolater(50, 90, 5, 0.001)
 
 while True:
 
-    bpm = 80
+    bpm = 70
 
     period = beat_scaler(bpm)
 

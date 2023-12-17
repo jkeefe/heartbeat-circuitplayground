@@ -75,6 +75,9 @@ Check out this [IOS app](https://apps.apple.com/us/app/nrf-connect-for-mobile/id
 
 ## Board module
 
+Libraries: https://learn.adafruit.com/welcome-to-circuitpython/circuitpython-libraries
+
+
 ```
 >>> import board
 >>> dir(board)
@@ -91,6 +94,7 @@ Check out this [IOS app](https://apps.apple.com/us/app/nrf-connect-for-mobile/id
 ```
 
 PWM: https://learn.adafruit.com/adafruit-circuit-playground-express/circuitpython-pwm
+
 
 
 ## Making scale interpreters for the colors
@@ -144,3 +148,16 @@ OR ... make many different ones ... like:
 ```python
 orange_scaler = make_interpolator(0, 50, 255, 110)
 ```
+
+## Accellerometer
+
+xyz + shake + tap code: https://learn.adafruit.com/adafruit-lis3dh-triple-axis-accelerometer-breakout/python-circuitpython
+
+```
+First the range of the accelerometer is set by changing the range property on the LIS3DH object.  Notice how you can set it to one of four possible ranges, where a 2G range gives you a lot of accuracy in a small range vs. up to a 16G range with less accuracy over a much wider range.  You'll need to pick the right range for your usage needs, although starting with a simple 2G range is a smart idea.
+
+Next in the main loop you can see the acceleration property is read.  This property is a 3-tuple with the X, Y, Z acceleration values that were read by the sensor.  Remember these values are in meters per second squared so you might need to convert to other units depending on your needs.
+
+That's all there is to reading the accelerometer values!
+```
+
